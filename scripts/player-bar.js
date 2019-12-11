@@ -27,4 +27,25 @@
     const previousSong = album.songs[previousSongIndex]; // Takes the current song that is playing and subtracts 1 in the album.songs array
     player.playPause(previousSong);
   });
+
+  // Event handler that responds to input changes on the time control input range
+  $('#time-control input').on('input', function (event) {
+    player.skipTo(event.target.value);
+  });
+
+  // Event handler for the volume control
+  $('#volume-control input').on('input', function(event) {
+    player.setVolume(event.target.value);
+  })
+
+  // setInterval updates the time control's range input update every second reflecting current time of the song, 1000 milliseconds in a second
+  setInterval( () => {
+    if (player.playState !== 'playing') { return; } // stops the function if the song is not playing
+    const currentTime = player.getTime() // Variable to get where we are in the song we are currently at
+    const duration = player.getDuration() // Variable to get the total time of the song
+    const percent = (currentTime/duration) * 100; // Equation gets the percentage of current place of the song
+    $('#time-control .current-time').text( player.prettyTime(currentTime) ); // Updates current time once per second, use .text() to set it to the variable currentTime
+    $('#time-control .total-time').text( player.prettyTime(duration) ); // Sets the total time of the song as the variable duration
+    $('#time-control input').val(percent) // Sets the time-control input's value to percent
+  }, 1000);
 }
